@@ -63,6 +63,7 @@ def register():
         cursor.close()
     
         return redirect(url_for("index"))
+    
     else:
         return render_template("register.html",form = form)
 
