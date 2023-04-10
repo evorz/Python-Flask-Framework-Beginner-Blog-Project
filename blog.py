@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.config["MYSQL_HOST"] = "localhost" #uzak sunucu olsaydı ip olacaktı
 app.config["MYSQL_USER"] = "root"
 app.config["MYSQL_PASSWORD"] = ""
-app.config["MYSQL_DB"] = "evorzblogg"
+app.config["MYSQL_DB"] = "evorzblog"
 app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
@@ -34,23 +34,37 @@ def index():
         {"id" : 2, "title" : "Trying2", "content" : "Trying2 content"},
         {"id" : 3, "title" : "Trying3", "content" : "Trying3 content"}   
     ]
-    
-    
     return render_template("index.html",articles = articles)
+
 
 @app.route("/about")
 def about():
     return render_template("about.html")
 
+
 @app.route("/register",methods = ["GET", "POST"])
 def register():
     form = RegisterForm(request.form)
     
-    if request.method == "POST":
+    if request.method == "POST" and form.validate():
+        name = form.name.data
+        username = form.username.data
+        email = form.email.data
+        password = sha256_crypt.encrypt(form.password.data)
+        
+        cursor = mysql.connection.cursor()
+        
+        query = "Insert Into users(name,email,username,password) VALUES(%s,%s,%s,%s)"
+        
+        cursor.execute(query, (name,email,username,password))
+        
+        mysql.connection.commit()
+
+        cursor.close()
+    
         return redirect(url_for("index"))
     else:
         return render_template("register.html",form = form)
-
 
 
 
