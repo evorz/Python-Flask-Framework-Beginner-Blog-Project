@@ -1,14 +1,11 @@
-<!doctype html>
-<title>My Application</title>
-{% with messages = get_flashed_messages(with_categories = true) %}
+{% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
 
     {% for category, message in messages %}
-    <div class="alert alert-{{ category }}" role="alert"> 
-        {{ message }}
-    </div>
+      <div class="alert alert-{{ category }}" role="alert">
+      {{ message }}
+      </div>
     {% endfor %}
 
   {% endif %}
 {% endwith %}
-{% block body %}{% endblock %}
